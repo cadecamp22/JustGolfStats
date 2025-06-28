@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -164,7 +165,8 @@
             font-size: 14px;
         }
 
-        .input-group input, .input-group select {
+        .input-group input,
+        .input-group select {
             width: 100%;
             padding: 10px;
             border: 2px solid #e0e0e0;
@@ -173,7 +175,8 @@
             transition: border-color 0.3s ease;
         }
 
-        .input-group input:focus, .input-group select:focus {
+        .input-group input:focus,
+        .input-group select:focus {
             outline: none;
             border-color: #2a5298;
             box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
@@ -201,7 +204,8 @@
             margin-bottom: 5px;
         }
 
-        .hole-setup-item select, .hole-setup-item input {
+        .hole-setup-item select,
+        .hole-setup-item input {
             width: 100%;
             padding: 5px;
             border: 1px solid #ddd;
@@ -308,6 +312,33 @@
             cursor: pointer;
         }
 
+        .track-display {
+            width: 60px;
+            height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+        }
+
+        .gir-yes {
+            background: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724;
+        }
+
+        .gir-no {
+            background: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24;
+        }
+
         .penalty-section {
             background: #fff3cd;
             border: 1px solid #ffeaa7;
@@ -341,6 +372,99 @@
         .penalty-btn.active {
             background: #ffeaa7;
             border-color: #f39c12;
+        }
+
+        .putting-section {
+            background: #f0f8ff;
+            border: 1px solid #add8e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .putt-input-area {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .btn-putt {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: #2a5298;
+            color: white;
+        }
+
+        .btn-putt:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(42, 82, 152, 0.3);
+        }
+
+        .btn-made {
+            background: #28a745 !important;
+        }
+
+        .btn-made:hover {
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3) !important;
+        }
+
+        .putt-list {
+            margin-top: 10px;
+            min-height: 30px;
+        }
+
+        .putt-item {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #495057;
+        }
+
+        .putt-item.made {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .putt-item .remove-putt {
+            margin-left: 5px;
+            color: #dc3545;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .putt-item .remove-putt:hover {
+            color: #c82333;
+        }
+
+        .strokes-gained-section {
+            background: #e8f5e8;
+            border: 1px solid #28a745;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .sg-putting-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .sg-putting-display.positive {
+            color: #28a745;
+        }
+
+        .sg-putting-display.negative {
+            color: #dc3545;
         }
 
         .hole-navigation {
@@ -488,22 +612,23 @@
             .tracking-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
-            
+
             .hole-navigation {
                 flex-direction: column;
             }
-            
+
             .nav-btn {
                 max-width: none;
                 width: 100%;
             }
-            
+
             .menu-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -558,14 +683,16 @@
         <div class="round-history hidden" id="roundHistory">
             <h2 style="color: #2a5298; margin-bottom: 20px;">Round History</h2>
             <div id="historyList"></div>
-            <button class="btn-primary" onclick="showMainMenu()" style="width: 100%; margin-top: 20px;">Back to Menu</button>
+            <button class="btn-primary" onclick="showMainMenu()" style="width: 100%; margin-top: 20px;">Back to
+                Menu</button>
         </div>
 
         <!-- Statistics View -->
         <div class="round-history hidden" id="statsView">
             <h2 style="color: #2a5298; margin-bottom: 20px;">Your Statistics</h2>
             <div id="statsContent"></div>
-            <button class="btn-primary" onclick="showMainMenu()" style="width: 100%; margin-top: 20px;">Back to Menu</button>
+            <button class="btn-primary" onclick="showMainMenu()" style="width: 100%; margin-top: 20px;">Back to
+                Menu</button>
         </div>
 
         <!-- Round Setup -->
@@ -600,27 +727,27 @@
                     </select>
                 </div>
             </div>
-            
+
             <div style="margin-top: 20px;">
                 <h4 style="color: #2a5298; margin-bottom: 15px;">Course Layout</h4>
-                
+
                 <!-- Front 9 -->
                 <div style="margin-bottom: 20px;">
                     <h5 style="color: #2a5298; margin-bottom: 10px;">Front Nine</h5>
                     <div class="hole-setup-grid" id="front9Setup"></div>
                 </div>
-                
+
                 <!-- Back 9 -->
                 <div style="margin-bottom: 20px;">
                     <h5 style="color: #2a5298; margin-bottom: 10px;">Back Nine</h5>
                     <div class="hole-setup-grid" id="back9Setup"></div>
                 </div>
-                
+
                 <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px;">
                     <span style="font-size: 16px; color: #2a5298;">Total Par: <strong id="totalPar">72</strong></span>
                 </div>
             </div>
-            
+
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="btn-primary" onclick="startRound()" style="flex: 1;">Start Round</button>
                 <button class="btn-secondary" onclick="showMainMenu()" style="flex: 1;">Cancel</button>
@@ -649,20 +776,45 @@
                     <input type="number" class="track-input" id="score" min="1" max="12" value="4">
                 </div>
                 <div class="track-item">
-                    <label>Putts</label>
-                    <input type="number" class="track-input" id="putts" min="0" max="8" value="2">
+                    <label>Total Putts</label>
+                    <input type="number" class="track-input" id="putts" min="0" max="8" value="2" readonly>
                 </div>
                 <div class="track-item" id="fairwayItem">
                     <label>Fairway</label>
                     <input type="checkbox" class="track-checkbox" id="fairway">
                 </div>
                 <div class="track-item">
-                    <label>GIR</label>
-                    <input type="checkbox" class="track-checkbox" id="gir">
+                    <label>GIR (Auto)</label>
+                    <div class="track-display" id="girDisplay">-</div>
                 </div>
                 <div class="track-item">
                     <label>Up & Down</label>
                     <input type="checkbox" class="track-checkbox" id="updown">
+                </div>
+            </div>
+
+            <!-- Putting Tracker Section -->
+            <div class="putting-section">
+                <h4 style="color: #2a5298; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    🏌️‍♂️ Putting Tracker
+                    <span style="font-size: 12px; color: #666; font-weight: normal;">(for Strokes Gained
+                        analysis)</span>
+                </h4>
+
+                <div class="putt-input-area">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <label for="puttDistance" style="font-size: 14px; color: #333;">Distance:</label>
+                            <input type="number" id="puttDistance" min="1" max="100" placeholder="ft"
+                                style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <button class="btn-putt" onclick="addPutt()">Add Putt</button>
+                        <button class="btn-putt btn-made" onclick="addMadePutt()">Made It!</button>
+                    </div>
+
+                    <div class="putt-list" id="puttList">
+                        <p style="color: #666; font-size: 12px; margin: 0;">No putts recorded yet</p>
+                    </div>
                 </div>
             </div>
 
@@ -707,6 +859,16 @@
                     <div class="stat-value" id="finalPutts">-</div>
                     <div class="stat-label">Total Putts</div>
                 </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="finalSGPutting">-</div>
+                    <div class="stat-label">Strokes Gained Putting</div>
+                </div>
+            </div>
+
+            <div class="strokes-gained-section">
+                <h4 style="color: #28a745; margin-bottom: 10px; text-align: center;">🎯 Putting Performance vs PGA Tour
+                </h4>
+                <div id="sgPuttingBreakdown"></div>
             </div>
 
             <div class="scorecard">
@@ -714,24 +876,77 @@
                     <thead>
                         <tr>
                             <th>Hole</th>
-                            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Out</th>
-                            <th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>In</th><th>Total</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                            <th>8</th>
+                            <th>9</th>
+                            <th>Out</th>
+                            <th>10</th>
+                            <th>11</th>
+                            <th>12</th>
+                            <th>13</th>
+                            <th>14</th>
+                            <th>15</th>
+                            <th>16</th>
+                            <th>17</th>
+                            <th>18</th>
+                            <th>In</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><strong>Par</strong></td>
-                            <td id="par1">-</td><td id="par2">-</td><td id="par3">-</td><td id="par4">-</td><td id="par5">-</td>
-                            <td id="par6">-</td><td id="par7">-</td><td id="par8">-</td><td id="par9">-</td><td id="parOut">-</td>
-                            <td id="par10">-</td><td id="par11">-</td><td id="par12">-</td><td id="par13">-</td><td id="par14">-</td>
-                            <td id="par15">-</td><td id="par16">-</td><td id="par17">-</td><td id="par18">-</td><td id="parIn">-</td><td id="parTotal">-</td>
+                            <td id="par1">-</td>
+                            <td id="par2">-</td>
+                            <td id="par3">-</td>
+                            <td id="par4">-</td>
+                            <td id="par5">-</td>
+                            <td id="par6">-</td>
+                            <td id="par7">-</td>
+                            <td id="par8">-</td>
+                            <td id="par9">-</td>
+                            <td id="parOut">-</td>
+                            <td id="par10">-</td>
+                            <td id="par11">-</td>
+                            <td id="par12">-</td>
+                            <td id="par13">-</td>
+                            <td id="par14">-</td>
+                            <td id="par15">-</td>
+                            <td id="par16">-</td>
+                            <td id="par17">-</td>
+                            <td id="par18">-</td>
+                            <td id="parIn">-</td>
+                            <td id="parTotal">-</td>
                         </tr>
                         <tr>
                             <td><strong>Score</strong></td>
-                            <td id="score1">-</td><td id="score2">-</td><td id="score3">-</td><td id="score4">-</td><td id="score5">-</td>
-                            <td id="score6">-</td><td id="score7">-</td><td id="score8">-</td><td id="score9">-</td><td id="scoreOut">-</td>
-                            <td id="score10">-</td><td id="score11">-</td><td id="score12">-</td><td id="score13">-</td><td id="score14">-</td>
-                            <td id="score15">-</td><td id="score16">-</td><td id="score17">-</td><td id="score18">-</td><td id="scoreIn">-</td><td id="scoreTotal">-</td>
+                            <td id="score1">-</td>
+                            <td id="score2">-</td>
+                            <td id="score3">-</td>
+                            <td id="score4">-</td>
+                            <td id="score5">-</td>
+                            <td id="score6">-</td>
+                            <td id="score7">-</td>
+                            <td id="score8">-</td>
+                            <td id="score9">-</td>
+                            <td id="scoreOut">-</td>
+                            <td id="score10">-</td>
+                            <td id="score11">-</td>
+                            <td id="score12">-</td>
+                            <td id="score13">-</td>
+                            <td id="score14">-</td>
+                            <td id="score15">-</td>
+                            <td id="score16">-</td>
+                            <td id="score17">-</td>
+                            <td id="score18">-</td>
+                            <td id="scoreIn">-</td>
+                            <td id="scoreTotal">-</td>
                         </tr>
                     </tbody>
                 </table>
@@ -746,26 +961,186 @@
 
     <script>
         // Default par values for each hole
-        const DEFAULT_PARS = [4,4,3,4,5,4,3,4,5,4,4,3,4,5,4,3,4,5];
-        
+        const DEFAULT_PARS = [4, 4, 3, 4, 5, 4, 3, 4, 5, 4, 4, 3, 4, 5, 4, 3, 4, 5];
+
+        // PGA Tour putting data - make percentages by distance
+        const PGA_PUTTING_DATA = {
+            3: 99.57, 4: 91.97, 5: 81.09, 6: 70.28, 7: 60.76, 8: 53.71,
+            9: 45.39, 10: 40.63, 12: 30.36, 17: 18.57, 22: 12.13, 30: 5.21
+        };
+
         let currentUser = null;
         let currentRound = {
             date: '',
             course: '',
             tees: '',
             holes: [],
-            currentHole: 0
+            currentHole: 0,
+            roundType: '18' // Track round type
         };
 
+        // Calculate GIR automatically
+        function calculateGIR(par, score, putts) {
+            const strokesToGreen = score - putts;
+            const regulationStrokes = par - 2;
+            return strokesToGreen <= regulationStrokes;
+        }
+
+        // Update GIR display
+        function updateGIRDisplay() {
+            const hole = currentRound.holes[currentRound.currentHole];
+            const score = parseInt(document.getElementById('score').value) || hole.par;
+            const putts = parseInt(document.getElementById('putts').value) || 0;
+            const gir = calculateGIR(hole.par, score, putts);
+
+            const girDisplay = document.getElementById('girDisplay');
+            girDisplay.textContent = gir ? 'YES' : 'NO';
+            girDisplay.className = 'track-display ' + (gir ? 'gir-yes' : 'gir-no');
+
+            // Update the hole data
+            hole.gir = gir;
+        }
+
+        // Calculate expected strokes from distance using PGA Tour data
+        function getExpectedStrokes(distanceFt) {
+            // Convert distance to closest data point
+            let makePercentage;
+
+            if (distanceFt <= 3) makePercentage = PGA_PUTTING_DATA[3];
+            else if (distanceFt <= 4) makePercentage = PGA_PUTTING_DATA[4];
+            else if (distanceFt <= 5) makePercentage = PGA_PUTTING_DATA[5];
+            else if (distanceFt <= 6) makePercentage = PGA_PUTTING_DATA[6];
+            else if (distanceFt <= 7) makePercentage = PGA_PUTTING_DATA[7];
+            else if (distanceFt <= 8) makePercentage = PGA_PUTTING_DATA[8];
+            else if (distanceFt <= 9) makePercentage = PGA_PUTTING_DATA[9];
+            else if (distanceFt <= 10) makePercentage = PGA_PUTTING_DATA[10];
+            else if (distanceFt <= 15) makePercentage = PGA_PUTTING_DATA[12];
+            else if (distanceFt <= 20) makePercentage = PGA_PUTTING_DATA[17];
+            else if (distanceFt <= 25) makePercentage = PGA_PUTTING_DATA[22];
+            else makePercentage = PGA_PUTTING_DATA[30];
+
+            // Convert percentage to decimal
+            const makeRate = makePercentage / 100;
+
+            // Expected strokes = 1 + miss_rate * expected_strokes_after_miss
+            // Assume misses leave about 3 feet on average
+            const expectedAfterMiss = 1 / (PGA_PUTTING_DATA[3] / 100);
+
+            return 1 + (1 - makeRate) * expectedAfterMiss;
+        }
+
+        // Putting functions
+        function addPutt() {
+            const distance = parseInt(document.getElementById('puttDistance').value);
+            if (!distance || distance < 1) {
+                alert('Please enter a valid distance');
+                return;
+            }
+
+            const hole = currentRound.holes[currentRound.currentHole];
+            if (!hole.putts_detail) hole.putts_detail = [];
+
+            hole.putts_detail.push({ distance: distance, made: false });
+            document.getElementById('puttDistance').value = '';
+            updatePuttDisplay();
+            updatePuttCount();
+        }
+
+        function addMadePutt() {
+            const distance = parseInt(document.getElementById('puttDistance').value);
+            if (!distance || distance < 1) {
+                alert('Please enter a valid distance');
+                return;
+            }
+
+            const hole = currentRound.holes[currentRound.currentHole];
+            if (!hole.putts_detail) hole.putts_detail = [];
+
+            hole.putts_detail.push({ distance: distance, made: true });
+            document.getElementById('puttDistance').value = '';
+            updatePuttDisplay();
+            updatePuttCount();
+        }
+
+        function removePutt(index) {
+            const hole = currentRound.holes[currentRound.currentHole];
+            hole.putts_detail.splice(index, 1);
+            updatePuttDisplay();
+            updatePuttCount();
+        }
+
+        function updatePuttDisplay() {
+            const hole = currentRound.holes[currentRound.currentHole];
+            const putts = hole.putts_detail || [];
+            const puttList = document.getElementById('puttList');
+
+            if (putts.length === 0) {
+                puttList.innerHTML = '<p style="color: #666; font-size: 12px; margin: 0;">No putts recorded yet</p>';
+                return;
+            }
+
+            puttList.innerHTML = putts.map((putt, index) => `
+                <span class="putt-item ${putt.made ? 'made' : ''}">
+                    ${putt.distance}ft ${putt.made ? '✓' : ''}
+                    <span class="remove-putt" onclick="removePutt(${index})">×</span>
+                </span>
+            `).join('');
+        }
+
+        function updatePuttCount() {
+            const hole = currentRound.holes[currentRound.currentHole];
+            const puttCount = hole.putts_detail ? hole.putts_detail.length : 0;
+            document.getElementById('putts').value = puttCount;
+            hole.putts = puttCount;
+            updateGIRDisplay(); // Update GIR when putts change
+        }
+
+        function calculateStrokesGainedPutting() {
+            let totalSG = 0;
+            let breakdown = [];
+
+            currentRound.holes.forEach(hole => {
+                if (!hole.putts_detail || hole.putts_detail.length === 0) return;
+
+                let holeSG = 0;
+                let remainingDistance = hole.putts_detail[0]?.distance || 0;
+
+                hole.putts_detail.forEach((putt, index) => {
+                    const expectedBefore = getExpectedStrokes(putt.distance);
+                    const actualStrokes = 1;
+
+                    let expectedAfter;
+                    if (putt.made) {
+                        expectedAfter = 0; // Holed out
+                    } else {
+                        // Assume miss leaves 3 feet (could be refined)
+                        expectedAfter = getExpectedStrokes(3);
+                    }
+
+                    const strokesGained = expectedBefore - (actualStrokes + expectedAfter);
+                    holeSG += strokesGained;
+                });
+
+                totalSG += holeSG;
+                breakdown.push({
+                    hole: hole.number,
+                    sg: holeSG,
+                    putts: hole.putts_detail.length
+                });
+            });
+
+            return { total: totalSG, breakdown: breakdown };
+        }
+
         // Initialize on page load
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             setupHoleInputs();
             checkAuth();
         });
 
         // Authentication functions
         function checkAuth() {
-            const user = localStorage.getItem('golfTrackerUser');
+            const user = JSON.parse(localStorage.getItem('golfTrackerUser') || 'null');
             if (user) {
                 currentUser = user;
                 showUserInfo();
@@ -779,10 +1154,10 @@
             event.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            
+
             // Simple authentication - in real app, this would be server-side
             const users = JSON.parse(localStorage.getItem('golfTrackerUsers') || '{}');
-            
+
             if (!users[username]) {
                 // Create new user
                 users[username] = { password: btoa(password), rounds: [] };
@@ -791,9 +1166,9 @@
                 alert('Incorrect password');
                 return;
             }
-            
+
             currentUser = username;
-            localStorage.setItem('golfTrackerUser', username);
+            localStorage.setItem('golfTrackerUser', JSON.stringify(username));
             showUserInfo();
             showMainMenu();
         }
@@ -851,7 +1226,7 @@
         function setupHoleInputs() {
             const front9 = document.getElementById('front9Setup');
             const back9 = document.getElementById('back9Setup');
-            
+
             // Create inputs for all 18 holes
             for (let i = 1; i <= 9; i++) {
                 front9.innerHTML += createHoleSetupHTML(i);
@@ -859,12 +1234,12 @@
             for (let i = 10; i <= 18; i++) {
                 back9.innerHTML += createHoleSetupHTML(i);
             }
-            
+
             // Add event listeners for par changes
             document.querySelectorAll('.par-input').forEach(select => {
                 select.addEventListener('change', updateTotalPar);
             });
-            
+
             updateTotalPar();
         }
 
@@ -872,7 +1247,7 @@
             const roundType = document.getElementById('setupHoles').value;
             const front9Div = document.getElementById('front9Setup').parentElement;
             const back9Div = document.getElementById('back9Setup').parentElement;
-            
+
             if (roundType === '18') {
                 front9Div.style.display = 'block';
                 back9Div.style.display = 'block';
@@ -883,7 +1258,7 @@
                 front9Div.style.display = 'none';
                 back9Div.style.display = 'block';
             }
-            
+
             updateTotalPar();
         }
 
@@ -903,10 +1278,22 @@
         }
 
         function updateTotalPar() {
+            const roundType = document.getElementById('setupHoles').value;
             let total = 0;
-            for (let i = 1; i <= 18; i++) {
+            let startHole = 1;
+            let endHole = 18;
+
+            // Determine which holes to count based on round type
+            if (roundType === '9') {
+                endHole = 9;
+            } else if (roundType === 'back9') {
+                startHole = 10;
+                endHole = 18;
+            }
+
+            for (let i = startHole; i <= endHole; i++) {
                 const parSelect = document.getElementById(`par${i}`);
-                if (parSelect) {
+                if (parSelect && parSelect.parentElement.parentElement.style.display !== 'none') {
                     total += parseInt(parSelect.value);
                 }
             }
@@ -922,7 +1309,7 @@
         function setupPenaltyButtons() {
             const penaltyBtns = document.querySelectorAll('.penalty-btn');
             penaltyBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     penaltyBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     saveCurrentHole();
@@ -931,10 +1318,20 @@
         }
 
         function setupAutoSave() {
-            ['score', 'putts', 'fairway', 'gir', 'updown'].forEach(id => {
+            ['score', 'fairway', 'updown'].forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {
-                    element.addEventListener('change', saveCurrentHole);
+                    element.addEventListener('change', () => {
+                        saveCurrentHole();
+                        updateGIRDisplay();
+                    });
+                }
+            });
+
+            // Add enter key support for putt distance input
+            document.getElementById('puttDistance').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    addPutt();
                 }
             });
         }
@@ -943,7 +1340,8 @@
             const date = document.getElementById('setupDate').value;
             const course = document.getElementById('setupCourse').value;
             const tees = document.getElementById('setupTees').value;
-            
+            const roundType = document.getElementById('setupHoles').value;
+
             if (!date || !course) {
                 alert('Please enter date and course name');
                 return;
@@ -952,23 +1350,35 @@
             currentRound.date = date;
             currentRound.course = course;
             currentRound.tees = tees;
+            currentRound.roundType = roundType;
             currentRound.holes = [];
             currentRound.currentHole = 0;
             currentRound.id = Date.now(); // Unique ID for this round
 
-            // Initialize holes with custom pars and yardages
-            for (let i = 0; i < 18; i++) {
-                const parSelect = document.getElementById(`par${i + 1}`);
-                const yardsInput = document.getElementById(`yards${i + 1}`);
-                
+            // Initialize holes based on round type
+            let startHole = 1;
+            let endHole = 18;
+
+            if (roundType === '9') {
+                endHole = 9;
+            } else if (roundType === 'back9') {
+                startHole = 10;
+                endHole = 18;
+            }
+
+            for (let i = startHole; i <= endHole; i++) {
+                const parSelect = document.getElementById(`par${i}`);
+                const yardsInput = document.getElementById(`yards${i}`);
+
                 currentRound.holes.push({
-                    number: i + 1,
+                    number: i,
                     par: parseInt(parSelect.value),
                     yardage: parseInt(yardsInput.value) || null,
                     score: parseInt(parSelect.value),
                     putts: 2,
+                    putts_detail: [], // Store individual putt data
                     fairway: false,
-                    gir: false,
+                    gir: false, // Will be calculated automatically
                     updown: false,
                     penalty: 'none'
                 });
@@ -1002,8 +1412,12 @@
             document.getElementById('score').value = hole.score;
             document.getElementById('putts').value = hole.putts;
             document.getElementById('fairway').checked = hole.fairway;
-            document.getElementById('gir').checked = hole.gir;
             document.getElementById('updown').checked = hole.updown;
+
+            // Initialize putts_detail if it doesn't exist
+            if (!hole.putts_detail) {
+                hole.putts_detail = [];
+            }
 
             // Set penalty button
             document.querySelectorAll('.penalty-btn').forEach(btn => {
@@ -1013,10 +1427,13 @@
                 }
             });
 
-            // Update navigation buttons
+            // Update navigation buttons based on hole count
+            const totalHoles = currentRound.holes.length;
+            const isLastHole = holeIndex === totalHoles - 1;
+
             document.getElementById('prevBtn').disabled = holeIndex === 0;
-            
-            if (holeIndex === 17) {
+
+            if (isLastHole) {
                 document.getElementById('nextBtn').classList.add('hidden');
                 document.getElementById('finishBtn').classList.remove('hidden');
             } else {
@@ -1025,25 +1442,30 @@
             }
 
             updateFairwayVisibility(hole.par);
+            updatePuttDisplay();
+            updateGIRDisplay();
         }
 
         function saveCurrentHole() {
             if (currentRound.holes.length === 0) return;
-            
+
             const hole = currentRound.holes[currentRound.currentHole];
             hole.score = parseInt(document.getElementById('score').value) || hole.par;
             hole.putts = parseInt(document.getElementById('putts').value) || 0;
             hole.fairway = document.getElementById('fairway').checked;
-            hole.gir = document.getElementById('gir').checked;
             hole.updown = document.getElementById('updown').checked;
-            
+
+            // Calculate GIR automatically
+            hole.gir = calculateGIR(hole.par, hole.score, hole.putts);
+
             const activeBtn = document.querySelector('.penalty-btn.active');
             hole.penalty = activeBtn ? activeBtn.dataset.penalty : 'none';
         }
 
         function nextHole() {
             saveCurrentHole();
-            if (currentRound.currentHole < 17) {
+            const totalHoles = currentRound.holes.length;
+            if (currentRound.currentHole < totalHoles - 1) {
                 loadHole(currentRound.currentHole + 1);
             }
         }
@@ -1057,15 +1479,15 @@
 
         function finishRound() {
             saveCurrentHole();
-            
+
             const stats = calculateStats();
             currentRound.stats = stats;
-            
+
             // Save round to user's history
             saveRoundToHistory();
-            
+
             displaySummary(stats);
-            
+
             hideAllScreens();
             document.getElementById('roundSummary').classList.remove('hidden');
         }
@@ -1082,14 +1504,17 @@
                 totalScore += hole.score;
                 totalPar += hole.par;
                 totalPutts += hole.putts;
-                
+
                 if (hole.par > 3) {
                     fairwayOpportunities++;
                     if (hole.fairway) fairwaysHit++;
                 }
-                
+
                 if (hole.gir) girHit++;
             });
+
+            const totalHoles = currentRound.holes.length;
+            const sgPutting = calculateStrokesGainedPutting();
 
             return {
                 totalScore,
@@ -1097,7 +1522,9 @@
                 vsPar: totalScore - totalPar,
                 totalPutts,
                 fairwayPercentage: fairwayOpportunities > 0 ? Math.round((fairwaysHit / fairwayOpportunities) * 100) : 0,
-                girPercentage: Math.round((girHit / 18) * 100)
+                girPercentage: Math.round((girHit / totalHoles) * 100),
+                strokesGainedPutting: sgPutting.total,
+                sgPuttingBreakdown: sgPutting.breakdown
             };
         }
 
@@ -1108,30 +1535,66 @@
             document.getElementById('finalGIR').textContent = stats.girPercentage + '%';
             document.getElementById('finalPutts').textContent = stats.totalPutts;
 
+            // Display Strokes Gained Putting
+            const sgPutting = stats.strokesGainedPutting || 0;
+            const sgElement = document.getElementById('finalSGPutting');
+            sgElement.textContent = (sgPutting > 0 ? '+' : '') + sgPutting.toFixed(2);
+            sgElement.style.color = sgPutting >= 0 ? '#28a745' : '#dc3545';
+
+            // Display SG Putting breakdown
+            const breakdown = stats.sgPuttingBreakdown || [];
+            const breakdownHtml = breakdown.length > 0 ? `
+                <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                    Hole-by-hole putting performance vs PGA Tour average:
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 5px; font-size: 11px;">
+                    ${breakdown.map(hole => `
+                        <div style="text-align: center; padding: 3px; background: ${hole.sg >= 0 ? '#d4edda' : '#f8d7da'}; border-radius: 4px;">
+                            <div style="font-weight: bold;">H${hole.hole}</div>
+                            <div style="color: ${hole.sg >= 0 ? '#155724' : '#721c24'};">
+                                ${hole.sg > 0 ? '+' : ''}${hole.sg.toFixed(2)}
+                            </div>
+                            <div style="font-size: 10px; color: #666;">${hole.putts}p</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="text-align: center; margin-top: 10px; font-size: 13px; color: #666;">
+                    ${sgPutting >= 0 ? '🎉 Above' : '📉 Below'} PGA Tour average by <strong>${Math.abs(sgPutting).toFixed(2)} strokes</strong>
+                </div>
+            ` : '<p style="color: #666; font-size: 12px; text-align: center;">No detailed putting data recorded</p>';
+
+            document.getElementById('sgPuttingBreakdown').innerHTML = breakdownHtml;
+
             // Update scorecard with pars and scores
             let outPar = 0, inPar = 0;
             let outScore = 0, inScore = 0;
-            
-            for (let i = 0; i < 18; i++) {
-                const hole = currentRound.holes[i];
-                document.getElementById(`par${i + 1}`).textContent = hole.par;
-                document.getElementById(`score${i + 1}`).textContent = hole.score;
-                
-                if (i < 9) {
+
+            // Clear all scorecard cells first
+            for (let i = 1; i <= 18; i++) {
+                document.getElementById(`par${i}`).textContent = '-';
+                document.getElementById(`score${i}`).textContent = '-';
+            }
+
+            // Fill in the holes that were played
+            currentRound.holes.forEach((hole, index) => {
+                document.getElementById(`par${hole.number}`).textContent = hole.par;
+                document.getElementById(`score${hole.number}`).textContent = hole.score;
+
+                if (hole.number <= 9) {
                     outPar += hole.par;
                     outScore += hole.score;
                 } else {
                     inPar += hole.par;
                     inScore += hole.score;
                 }
-            }
-            
-            document.getElementById('parOut').textContent = outPar;
-            document.getElementById('parIn').textContent = inPar;
-            document.getElementById('parTotal').textContent = outPar + inPar;
-            document.getElementById('scoreOut').textContent = outScore;
-            document.getElementById('scoreIn').textContent = inScore;
-            document.getElementById('scoreTotal').textContent = outScore + inScore;
+            });
+
+            document.getElementById('parOut').textContent = outPar || '-';
+            document.getElementById('parIn').textContent = inPar || '-';
+            document.getElementById('parTotal').textContent = stats.totalPar;
+            document.getElementById('scoreOut').textContent = outScore || '-';
+            document.getElementById('scoreIn').textContent = inScore || '-';
+            document.getElementById('scoreTotal').textContent = stats.totalScore;
         }
 
         // Data persistence functions
@@ -1148,24 +1611,29 @@
             const users = JSON.parse(localStorage.getItem('golfTrackerUsers') || '{}');
             const rounds = users[currentUser]?.rounds || [];
             const historyList = document.getElementById('historyList');
-            
+
             if (rounds.length === 0) {
                 historyList.innerHTML = '<p style="text-align: center; color: #666;">No rounds recorded yet</p>';
                 return;
             }
-            
-            historyList.innerHTML = rounds.reverse().map(round => `
-                <div class="history-item" onclick="viewRound('${round.id}')">
-                    <div class="history-info">
-                        <h4>${round.course}</h4>
-                        <p>${new Date(round.date).toLocaleDateString()} • ${round.tees || 'Regular'} tees</p>
+
+            historyList.innerHTML = rounds.reverse().map(round => {
+                const roundTypeText = round.roundType === '9' ? '9 holes (Front)' :
+                    round.roundType === 'back9' ? '9 holes (Back)' : '18 holes';
+
+                return `
+                    <div class="history-item" onclick="viewRound('${round.id}')">
+                        <div class="history-info">
+                            <h4>${round.course}</h4>
+                            <p>${new Date(round.date).toLocaleDateString()} • ${round.tees || 'Regular'} tees • ${roundTypeText}</p>
+                        </div>
+                        <div class="history-stats">
+                            <div class="score-display">${round.stats.totalScore}</div>
+                            <p style="color: #666; font-size: 14px;">${round.stats.vsPar > 0 ? '+' : ''}${round.stats.vsPar}</p>
+                        </div>
                     </div>
-                    <div class="history-stats">
-                        <div class="score-display">${round.stats.totalScore}</div>
-                        <p style="color: #666; font-size: 14px;">${round.stats.vsPar > 0 ? '+' : ''}${round.stats.vsPar}</p>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function viewRound(roundId) {
@@ -1182,45 +1650,55 @@
         function calculateUserStats() {
             const users = JSON.parse(localStorage.getItem('golfTrackerUsers') || '{}');
             const rounds = users[currentUser]?.rounds || [];
-            
+
             if (rounds.length === 0) {
                 document.getElementById('statsContent').innerHTML = '<p style="text-align: center; color: #666;">No rounds recorded yet</p>';
                 return;
             }
-            
+
             // Calculate averages
             let totalScore = 0;
             let totalPutts = 0;
             let totalFairways = 0;
             let totalGIR = 0;
+            let totalSGPutting = 0;
+            let sgPuttingRounds = 0;
+            let totalHoles = 0;
             let bestScore = Infinity;
             let worstScore = -Infinity;
-            
+
             rounds.forEach(round => {
                 const stats = round.stats;
-                totalScore += stats.totalScore;
+                totalScore += stats.vsPar;
                 totalPutts += stats.totalPutts;
                 totalFairways += stats.fairwayPercentage;
                 totalGIR += stats.girPercentage;
-                
-                if (stats.totalScore < bestScore) bestScore = stats.totalScore;
-                if (stats.totalScore > worstScore) worstScore = stats.totalScore;
+                totalHoles += round.holes.length;
+
+                if (stats.strokesGainedPutting !== undefined) {
+                    totalSGPutting += stats.strokesGainedPutting;
+                    sgPuttingRounds++;
+                }
+
+                if (stats.vsPar < bestScore) bestScore = stats.vsPar;
+                if (stats.vsPar > worstScore) worstScore = stats.vsPar;
             });
-            
+
             const avgScore = Math.round(totalScore / rounds.length);
-            const avgPutts = Math.round(totalPutts / rounds.length);
+            const avgPutts = Math.round(totalPutts / totalHoles * 10) / 10; // Average putts per hole
             const avgFairways = Math.round(totalFairways / rounds.length);
             const avgGIR = Math.round(totalGIR / rounds.length);
-            
+            const avgSGPutting = sgPuttingRounds > 0 ? (totalSGPutting / sgPuttingRounds) : 0;
+
             document.getElementById('statsContent').innerHTML = `
                 <div class="summary-stats">
                     <div class="stat-box">
-                        <div class="stat-value">${avgScore}</div>
-                        <div class="stat-label">Avg Score</div>
+                        <div class="stat-value">${avgScore === 0 ? 'E' : (avgScore > 0 ? '+' : '') + avgScore}</div>
+                        <div class="stat-label">Avg Score Vs Par</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-value">${avgPutts}</div>
-                        <div class="stat-label">Avg Putts</div>
+                        <div class="stat-label">Avg Putts Per Hole</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-value">${avgFairways}%</div>
@@ -1231,14 +1709,29 @@
                         <div class="stat-label">Avg GIR</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-value">${bestScore}</div>
+                        <div class="stat-value">${bestScore === 0 ? 'E' : (bestScore > 0 ? '+' : '') + bestScore}</div>
                         <div class="stat-label">Best Round</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-value">${rounds.length}</div>
                         <div class="stat-label">Total Rounds</div>
                     </div>
+                    ${sgPuttingRounds > 0 ? `
+                    <div class="stat-box" style="border-left-color: #28a745;">
+                        <div class="stat-value" style="color: ${avgSGPutting >= 0 ? '#28a745' : '#dc3545'};">
+                            ${avgSGPutting > 0 ? '+' : ''}${avgSGPutting.toFixed(2)}
+                        </div>
+                        <div class="stat-label">Avg SG Putting</div>
+                    </div>
+                    ` : ''}
                 </div>
+                ${sgPuttingRounds > 0 ? `
+                <div style="margin-top: 20px; text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                    <p style="margin: 0; color: #666; font-size: 14px;">
+                        🏌️‍♂️ You're averaging <strong>${Math.abs(avgSGPutting).toFixed(2)} strokes ${avgSGPutting >= 0 ? 'better' : 'worse'}</strong> than PGA Tour average on the greens
+                    </p>
+                </div>
+                ` : ''}
             `;
         }
 
@@ -1258,9 +1751,10 @@
         function handleSwipe() {
             const swipeThreshold = 50;
             const diff = touchStartX - touchEndX;
+            const totalHoles = currentRound.holes.length;
 
-            if (Math.abs(diff) > swipeThreshold && currentRound.holes.length > 0 && !document.getElementById('holeTracker').classList.contains('hidden')) {
-                if (diff > 0 && currentRound.currentHole < 17) {
+            if (Math.abs(diff) > swipeThreshold && totalHoles > 0 && !document.getElementById('holeTracker').classList.contains('hidden')) {
+                if (diff > 0 && currentRound.currentHole < totalHoles - 1) {
                     nextHole();
                 } else if (diff < 0 && currentRound.currentHole > 0) {
                     previousHole();
@@ -1269,4 +1763,5 @@
         }
     </script>
 </body>
+
 </html>
