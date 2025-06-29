@@ -728,6 +728,19 @@
                 </div>
             </div>
 
+            <div
+                style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #2a5298;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <input type="checkbox" id="enableStrokesGained" checked style="transform: scale(1.2);">
+                    <label for="enableStrokesGained" style="font-weight: 600; color: #2a5298; margin: 0;">Enable Strokes
+                        Gained Analysis</label>
+                </div>
+                <p style="color: #666; font-size: 13px; margin: 0;">
+                    Track approach shot distances for advanced performance analysis vs PGA Tour averages.
+                    Turn off for faster round entry with basic stats only.
+                </p>
+            </div>
+
             <div style="margin-top: 20px;">
                 <h4 style="color: #2a5298; margin-bottom: 15px;">Course Layout</h4>
 
@@ -770,14 +783,29 @@
                 </div>
             </div>
 
-            <div class="tracking-grid">
+            <div class="tracking-grid" id="trackingGrid">
                 <div class="track-item">
                     <label>Score</label>
-                    <input type="number" class="track-input" id="score" min="1" max="12" value="4">
+                    <select class="track-input" id="score" style="height: 50px; font-size: 18px; font-weight: bold;">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div class="track-item" id="approachYardsItem" style="display: none;">
+                    <label>Approach Yards</label>
+                    <input type="number" class="track-input" id="approachYards" min="0" max="300" placeholder="Yds">
                 </div>
                 <div class="track-item">
                     <label>Total Putts</label>
-                    <input type="number" class="track-input" id="putts" min="0" max="8" value="2" readonly>
+                    <input type="number" class="track-input" id="putts" min="0" max="8" value="2">
                 </div>
                 <div class="track-item" id="fairwayItem">
                     <label>Fairway</label>
@@ -794,7 +822,7 @@
             </div>
 
             <!-- Putting Tracker Section -->
-            <div class="putting-section">
+            <div class="putting-section" id="puttingSection" style="display: none;">
                 <h4 style="color: #2a5298; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                     🏌️‍♂️ Putting Tracker
                     <span style="font-size: 12px; color: #666; font-weight: normal;">(for Strokes Gained
@@ -860,8 +888,16 @@
                     <div class="stat-label">Total Putts</div>
                 </div>
                 <div class="stat-box">
+                    <div class="stat-value" id="finalSGOffTee">-</div>
+                    <div class="stat-label">SG Off Tee</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="finalSGApproach">-</div>
+                    <div class="stat-label">SG Approach</div>
+                </div>
+                <div class="stat-box">
                     <div class="stat-value" id="finalSGPutting">-</div>
-                    <div class="stat-label">Strokes Gained Putting</div>
+                    <div class="stat-label">SG Putting</div>
                 </div>
             </div>
 
@@ -869,6 +905,18 @@
                 <h4 style="color: #28a745; margin-bottom: 10px; text-align: center;">🎯 Putting Performance vs PGA Tour
                 </h4>
                 <div id="sgPuttingBreakdown"></div>
+            </div>
+
+            <div class="strokes-gained-section" style="background: #fff3e0; border-color: #ff9800;">
+                <h4 style="color: #ff9800; margin-bottom: 10px; text-align: center;">🏌️ Off The Tee Analysis</h4>
+                <div id="sgOffTeeBreakdown" style="text-align: center; font-size: 13px; color: #333;">
+                </div>
+            </div>
+
+            <div class="strokes-gained-section" style="background: #e8f4fd; border-color: #2a5298;">
+                <h4 style="color: #2a5298; margin-bottom: 10px; text-align: center;">🏌️ Approach Shot Analysis</h4>
+                <div id="sgApproachBreakdown" style="text-align: center; font-size: 13px; color: #333;">
+                </div>
             </div>
 
             <div class="scorecard">
@@ -969,6 +1017,38 @@
             9: 45.39, 10: 40.63, 12: 30.36, 17: 18.57, 22: 12.13, 30: 5.21
         };
 
+        // PGA Tour approach baseline data - expected strokes to hole out by distance
+        const APPROACH_BASELINE_DATA = {
+            50: 2.5,    // Extrapolated
+            75: 2.65,   // Extrapolated  
+            100: 2.80,  // From research data
+            115: 2.825, // From research data
+            125: 2.86,  // Interpolated
+            140: 2.91,  // From research data
+            150: 2.945, // Interpolated
+            160: 2.98,  // From research data
+            175: 3.055, // Interpolated
+            200: 3.16,  // From research data
+            225: 3.28,  // Extrapolated
+            250: 3.42,  // Extrapolated
+            275: 3.58,  // Extrapolated
+            300: 3.75   // Extrapolated
+        };
+
+        // PGA Tour tee baseline data - expected strokes from tee by hole length
+        const TEE_BASELINE_DATA = {
+            100: 2.92,  // Very short par 3s
+            200: 3.12,  // Short par 3s
+            300: 3.71,  // Long par 3s / Short par 4s
+            360: 3.92,  // Medium par 4s
+            400: 3.99,  // Long par 4s
+            450: 4.08,  // Very long par 4s
+            460: 4.17,  // Short par 5s
+            500: 4.41,  // Medium par 5s
+            550: 4.65,  // Long par 5s
+            600: 4.85   // Very long par 5s
+        };
+
         let currentUser = null;
         let currentRound = {
             date: '',
@@ -999,6 +1079,80 @@
 
             // Update the hole data
             hole.gir = gir;
+        }
+
+        // Get expected strokes from tee using interpolation
+        function getExpectedStrokesFromTee(holeYardage) {
+            if (!holeYardage || holeYardage <= 0) return 0;
+
+            // Get sorted distances from baseline data
+            const distances = Object.keys(TEE_BASELINE_DATA).map(Number).sort((a, b) => a - b);
+
+            // If distance is at or below minimum, use minimum value
+            if (holeYardage <= distances[0]) {
+                return TEE_BASELINE_DATA[distances[0]];
+            }
+
+            // If distance is at or above maximum, use maximum value  
+            if (holeYardage >= distances[distances.length - 1]) {
+                return TEE_BASELINE_DATA[distances[distances.length - 1]];
+            }
+
+            // Find the two points to interpolate between
+            let lowerDistance = distances[0];
+            let upperDistance = distances[distances.length - 1];
+
+            for (let i = 0; i < distances.length - 1; i++) {
+                if (holeYardage >= distances[i] && holeYardage <= distances[i + 1]) {
+                    lowerDistance = distances[i];
+                    upperDistance = distances[i + 1];
+                    break;
+                }
+            }
+
+            // Linear interpolation
+            const lowerStrokes = TEE_BASELINE_DATA[lowerDistance];
+            const upperStrokes = TEE_BASELINE_DATA[upperDistance];
+            const ratio = (holeYardage - lowerDistance) / (upperDistance - lowerDistance);
+
+            return lowerStrokes + (upperStrokes - lowerStrokes) * ratio;
+        }
+
+        // Get expected strokes for approach shots using interpolation
+        function getExpectedStrokesApproach(distanceYards) {
+            if (!distanceYards || distanceYards <= 0) return 0;
+
+            // Get sorted distances from baseline data
+            const distances = Object.keys(APPROACH_BASELINE_DATA).map(Number).sort((a, b) => a - b);
+
+            // If distance is at or below minimum, use minimum value
+            if (distanceYards <= distances[0]) {
+                return APPROACH_BASELINE_DATA[distances[0]];
+            }
+
+            // If distance is at or above maximum, use maximum value  
+            if (distanceYards >= distances[distances.length - 1]) {
+                return APPROACH_BASELINE_DATA[distances[distances.length - 1]];
+            }
+
+            // Find the two points to interpolate between
+            let lowerDistance = distances[0];
+            let upperDistance = distances[distances.length - 1];
+
+            for (let i = 0; i < distances.length - 1; i++) {
+                if (distanceYards >= distances[i] && distanceYards <= distances[i + 1]) {
+                    lowerDistance = distances[i];
+                    upperDistance = distances[i + 1];
+                    break;
+                }
+            }
+
+            // Linear interpolation
+            const lowerStrokes = APPROACH_BASELINE_DATA[lowerDistance];
+            const upperStrokes = APPROACH_BASELINE_DATA[upperDistance];
+            const ratio = (distanceYards - lowerDistance) / (upperDistance - lowerDistance);
+
+            return lowerStrokes + (upperStrokes - lowerStrokes) * ratio;
         }
 
         // Calculate expected strokes from distance using PGA Tour data
@@ -1088,6 +1242,9 @@
         }
 
         function updatePuttCount() {
+            // Only update putts automatically if strokes gained is enabled
+            if (!currentRound.enableStrokesGained) return;
+
             const hole = currentRound.holes[currentRound.currentHole];
             const puttCount = hole.putts_detail ? hole.putts_detail.length : 0;
             document.getElementById('putts').value = puttCount;
@@ -1095,7 +1252,92 @@
             updateGIRDisplay(); // Update GIR when putts change
         }
 
+        function calculateStrokesGainedOffTee() {
+            // Skip calculation if strokes gained is disabled
+            if (!currentRound.enableStrokesGained) {
+                return { total: 0, holesWithData: 0, average: 0 };
+            }
+
+            let totalSG = 0;
+            let holesWithData = 0;
+
+            currentRound.holes.forEach(hole => {
+                // SG Off The Tee only applies to par 4s and 5s (not par 3s)
+                if (hole.par === 3) return;
+
+                // Need both hole yardage and approach yardage to calculate
+                if (!hole.yardage || !hole.approachYards || hole.approachYards <= 0) return;
+
+                // Get expected strokes from tee for this hole length
+                const expectedFromTee = getExpectedStrokesFromTee(hole.yardage);
+
+                // Get expected strokes from where they ended up after tee shot
+                const expectedFromEndPosition = getExpectedStrokesApproach(hole.approachYards);
+
+                // Strokes gained = expected from tee - expected from end position - 1 (stroke taken)
+                const strokesGained = expectedFromTee - expectedFromEndPosition - 1;
+
+                totalSG += strokesGained;
+                holesWithData++;
+            });
+
+            return {
+                total: totalSG,
+                holesWithData: holesWithData,
+                average: holesWithData > 0 ? totalSG / holesWithData : 0
+            };
+        }
+
+        function calculateStrokesGainedApproach() {
+            // Skip calculation if strokes gained is disabled
+            if (!currentRound.enableStrokesGained) {
+                return { total: 0, holesWithData: 0, average: 0 };
+            }
+
+            let totalSG = 0;
+            let holesWithData = 0;
+
+            currentRound.holes.forEach(hole => {
+                if (!hole.approachYards || hole.approachYards <= 0) return;
+
+                // Get expected strokes from approach distance to hole out
+                const expectedStrokes = getExpectedStrokesApproach(hole.approachYards);
+
+                // Calculate actual strokes from approach position to hole completion
+                // This should be: approach shot (1) + putts + any additional shots around green
+                // For holes where they hit GIR: actualStrokes = 1 + putts
+                // For holes where they missed green: actualStrokes = total score - (drives + penalties)
+
+                let actualStrokes;
+                if (hole.gir) {
+                    // Hit green in regulation: approach + putts
+                    actualStrokes = 1 + hole.putts;
+                } else {
+                    // Missed green: need to account for chips/pitches
+                    // This is total score minus the tee shot(s) that got them to approach position
+                    // For simplicity, assume 1 tee shot, so actual from approach = score - 1
+                    actualStrokes = hole.score - 1;
+                }
+
+                // Strokes gained = expected - actual
+                const strokesGained = expectedStrokes - actualStrokes;
+                totalSG += strokesGained;
+                holesWithData++;
+            });
+
+            return {
+                total: totalSG,
+                holesWithData: holesWithData,
+                average: holesWithData > 0 ? totalSG / holesWithData : 0
+            };
+        }
+
         function calculateStrokesGainedPutting() {
+            // Skip calculation if strokes gained is disabled
+            if (!currentRound.enableStrokesGained) {
+                return { total: 0, breakdown: [] };
+            }
+
             let totalSG = 0;
             let breakdown = [];
 
@@ -1328,12 +1570,33 @@
                 }
             });
 
+            // Add putts listener for manual entry when SG is disabled
+            const puttsElement = document.getElementById('putts');
+            if (puttsElement) {
+                puttsElement.addEventListener('change', () => {
+                    saveCurrentHole();
+                    updateGIRDisplay();
+                });
+            }
+
+            // Only add approach yards listener if strokes gained is enabled
+            const approachYardsElement = document.getElementById('approachYards');
+            if (approachYardsElement) {
+                approachYardsElement.addEventListener('change', () => {
+                    saveCurrentHole();
+                    updateGIRDisplay();
+                });
+            }
+
             // Add enter key support for putt distance input
-            document.getElementById('puttDistance').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    addPutt();
-                }
-            });
+            const puttDistanceElement = document.getElementById('puttDistance');
+            if (puttDistanceElement) {
+                puttDistanceElement.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        addPutt();
+                    }
+                });
+            }
         }
 
         function startRound() {
@@ -1341,6 +1604,7 @@
             const course = document.getElementById('setupCourse').value;
             const tees = document.getElementById('setupTees').value;
             const roundType = document.getElementById('setupHoles').value;
+            const enableStrokesGained = document.getElementById('enableStrokesGained').checked;
 
             if (!date || !course) {
                 alert('Please enter date and course name');
@@ -1351,6 +1615,7 @@
             currentRound.course = course;
             currentRound.tees = tees;
             currentRound.roundType = roundType;
+            currentRound.enableStrokesGained = enableStrokesGained;
             currentRound.holes = [];
             currentRound.currentHole = 0;
             currentRound.id = Date.now(); // Unique ID for this round
@@ -1377,6 +1642,7 @@
                     score: parseInt(parSelect.value),
                     putts: 2,
                     putts_detail: [], // Store individual putt data
+                    approachYards: null, // Distance of approach shot
                     fairway: false,
                     gir: false, // Will be calculated automatically
                     updown: false,
@@ -1409,10 +1675,29 @@
             document.getElementById('currentHoleNum').textContent = hole.number;
             document.getElementById('displayPar').textContent = hole.par;
             document.getElementById('displayYardage').textContent = hole.yardage || '-';
-            document.getElementById('score').value = hole.score;
+
+            // Set score dropdown to the hole's score
+            document.getElementById('score').value = hole.score.toString();
+
+            document.getElementById('approachYards').value = hole.approachYards || '';
             document.getElementById('putts').value = hole.putts;
             document.getElementById('fairway').checked = hole.fairway;
             document.getElementById('updown').checked = hole.updown;
+
+            // Show/hide strokes gained fields based on setting
+            const approachYardsItem = document.getElementById('approachYardsItem');
+            const puttingSection = document.getElementById('puttingSection');
+            const puttsInput = document.getElementById('putts');
+
+            if (currentRound.enableStrokesGained) {
+                approachYardsItem.style.display = 'block';
+                puttingSection.style.display = 'block';
+                puttsInput.readOnly = true; // Controlled by putting tracker
+            } else {
+                approachYardsItem.style.display = 'none';
+                puttingSection.style.display = 'none';
+                puttsInput.readOnly = false; // Manual entry
+            }
 
             // Initialize putts_detail if it doesn't exist
             if (!hole.putts_detail) {
@@ -1451,7 +1736,18 @@
 
             const hole = currentRound.holes[currentRound.currentHole];
             hole.score = parseInt(document.getElementById('score').value) || hole.par;
-            hole.putts = parseInt(document.getElementById('putts').value) || 0;
+
+            // Only save approach yards if strokes gained is enabled
+            if (currentRound.enableStrokesGained) {
+                hole.approachYards = parseInt(document.getElementById('approachYards').value) || null;
+                // Putts are controlled by putting tracker when SG is enabled
+                hole.putts = parseInt(document.getElementById('putts').value) || 0;
+            } else {
+                hole.approachYards = null;
+                // Manual putt entry when SG is disabled
+                hole.putts = parseInt(document.getElementById('putts').value) || 0;
+            }
+
             hole.fairway = document.getElementById('fairway').checked;
             hole.updown = document.getElementById('updown').checked;
 
@@ -1515,6 +1811,8 @@
 
             const totalHoles = currentRound.holes.length;
             const sgPutting = calculateStrokesGainedPutting();
+            const sgApproach = calculateStrokesGainedApproach();
+            const sgOffTee = calculateStrokesGainedOffTee();
 
             return {
                 totalScore,
@@ -1524,7 +1822,11 @@
                 fairwayPercentage: fairwayOpportunities > 0 ? Math.round((fairwaysHit / fairwayOpportunities) * 100) : 0,
                 girPercentage: Math.round((girHit / totalHoles) * 100),
                 strokesGainedPutting: sgPutting.total,
-                sgPuttingBreakdown: sgPutting.breakdown
+                sgPuttingBreakdown: sgPutting.breakdown,
+                strokesGainedApproach: sgApproach.total,
+                sgApproachHoles: sgApproach.holesWithData,
+                strokesGainedOffTee: sgOffTee.total,
+                sgOffTeeHoles: sgOffTee.holesWithData
             };
         }
 
@@ -1535,35 +1837,140 @@
             document.getElementById('finalGIR').textContent = stats.girPercentage + '%';
             document.getElementById('finalPutts').textContent = stats.totalPutts;
 
+            // Display Strokes Gained Off The Tee
+            const sgOffTee = stats.strokesGainedOffTee || 0;
+            const sgOffTeeElement = document.getElementById('finalSGOffTee');
+            if (!currentRound.enableStrokesGained) {
+                sgOffTeeElement.textContent = 'Disabled';
+                sgOffTeeElement.style.color = '#666';
+            } else if (stats.sgOffTeeHoles > 0) {
+                sgOffTeeElement.textContent = (sgOffTee > 0 ? '+' : '') + sgOffTee.toFixed(2);
+                sgOffTeeElement.style.color = sgOffTee >= 0 ? '#28a745' : '#dc3545';
+            } else {
+                sgOffTeeElement.textContent = 'N/A';
+                sgOffTeeElement.style.color = '#666';
+            }
+
+            // Display Strokes Gained Approach
+            const sgApproach = stats.strokesGainedApproach || 0;
+            const sgApproachElement = document.getElementById('finalSGApproach');
+            if (!currentRound.enableStrokesGained) {
+                sgApproachElement.textContent = 'Disabled';
+                sgApproachElement.style.color = '#666';
+            } else if (stats.sgApproachHoles > 0) {
+                sgApproachElement.textContent = (sgApproach > 0 ? '+' : '') + sgApproach.toFixed(2);
+                sgApproachElement.style.color = sgApproach >= 0 ? '#28a745' : '#dc3545';
+            } else {
+                sgApproachElement.textContent = 'N/A';
+                sgApproachElement.style.color = '#666';
+            }
+
             // Display Strokes Gained Putting
             const sgPutting = stats.strokesGainedPutting || 0;
             const sgElement = document.getElementById('finalSGPutting');
-            sgElement.textContent = (sgPutting > 0 ? '+' : '') + sgPutting.toFixed(2);
-            sgElement.style.color = sgPutting >= 0 ? '#28a745' : '#dc3545';
+            if (!currentRound.enableStrokesGained) {
+                sgElement.textContent = 'Disabled';
+                sgElement.style.color = '#666';
+            } else {
+                sgElement.textContent = (sgPutting > 0 ? '+' : '') + sgPutting.toFixed(2);
+                sgElement.style.color = sgPutting >= 0 ? '#28a745' : '#dc3545';
+            }
 
             // Display SG Putting breakdown
             const breakdown = stats.sgPuttingBreakdown || [];
-            const breakdownHtml = breakdown.length > 0 ? `
-                <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
-                    Hole-by-hole putting performance vs PGA Tour average:
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 5px; font-size: 11px;">
-                    ${breakdown.map(hole => `
-                        <div style="text-align: center; padding: 3px; background: ${hole.sg >= 0 ? '#d4edda' : '#f8d7da'}; border-radius: 4px;">
-                            <div style="font-weight: bold;">H${hole.hole}</div>
-                            <div style="color: ${hole.sg >= 0 ? '#155724' : '#721c24'};">
-                                ${hole.sg > 0 ? '+' : ''}${hole.sg.toFixed(2)}
+            let breakdownHtml;
+
+            if (!currentRound.enableStrokesGained) {
+                breakdownHtml = '<p style="color: #666; font-size: 12px; text-align: center;">Strokes Gained analysis was disabled for this round</p>';
+            } else if (breakdown.length > 0) {
+                breakdownHtml = `
+                    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                        Hole-by-hole putting performance vs PGA Tour average:
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 5px; font-size: 11px;">
+                        ${breakdown.map(hole => `
+                            <div style="text-align: center; padding: 3px; background: ${hole.sg >= 0 ? '#d4edda' : '#f8d7da'}; border-radius: 4px;">
+                                <div style="font-weight: bold;">H${hole.hole}</div>
+                                <div style="color: ${hole.sg >= 0 ? '#155724' : '#721c24'};">
+                                    ${hole.sg > 0 ? '+' : ''}${hole.sg.toFixed(2)}
+                                </div>
+                                <div style="font-size: 10px; color: #666;">${hole.putts}p</div>
                             </div>
-                            <div style="font-size: 10px; color: #666;">${hole.putts}p</div>
-                        </div>
-                    `).join('')}
-                </div>
-                <div style="text-align: center; margin-top: 10px; font-size: 13px; color: #666;">
-                    ${sgPutting >= 0 ? '🎉 Above' : '📉 Below'} PGA Tour average by <strong>${Math.abs(sgPutting).toFixed(2)} strokes</strong>
-                </div>
-            ` : '<p style="color: #666; font-size: 12px; text-align: center;">No detailed putting data recorded</p>';
+                        `).join('')}
+                    </div>
+                    <div style="text-align: center; margin-top: 10px; font-size: 13px; color: #666;">
+                        ${sgPutting >= 0 ? '🎉 Above' : '📉 Below'} PGA Tour average by <strong>${Math.abs(sgPutting).toFixed(2)} strokes</strong>
+                    </div>
+                `;
+            } else {
+                breakdownHtml = '<p style="color: #666; font-size: 12px; text-align: center;">No detailed putting data recorded</p>';
+            }
 
             document.getElementById('sgPuttingBreakdown').innerHTML = breakdownHtml;
+
+            // Display SG Off The Tee breakdown
+            const sgOffTeeBreakdown = document.getElementById('sgOffTeeBreakdown');
+            if (!currentRound.enableStrokesGained) {
+                sgOffTeeBreakdown.innerHTML = `
+                    <p style="color: #666; font-size: 12px;">
+                        Strokes Gained analysis was disabled for this round.
+                    </p>
+                `;
+            } else if (stats.sgOffTeeHoles > 0) {
+                sgOffTeeBreakdown.innerHTML = `
+                    <p style="margin: 5px 0;">
+                        Driving analyzed on <strong>${stats.sgOffTeeHoles}</strong> holes (Par 4s & 5s)
+                    </p>
+                    <p style="margin: 5px 0; font-weight: bold;">
+                        ${sgOffTee >= 0 ? '⬆️ Better' : '⬇️ Worse'} than PGA Tour average by 
+                        <span style="color: ${sgOffTee >= 0 ? '#28a745' : '#dc3545'};">
+                            ${Math.abs(sgOffTee).toFixed(2)} strokes
+                        </span>
+                    </p>
+                    <p style="margin: 5px 0; font-size: 12px; color: #666;">
+                        Based on hole length vs. position after tee shot
+                    </p>
+                `;
+            } else {
+                sgOffTeeBreakdown.innerHTML = `
+                    <p style="color: #666; font-size: 12px;">
+                        No driving data recorded this round.<br>
+                        Need both hole yardage and approach distance for analysis.
+                    </p>
+                `;
+            }
+
+            // Display SG Approach breakdown
+            const sgApproachBreakdown = document.getElementById('sgApproachBreakdown');
+            if (!currentRound.enableStrokesGained) {
+                sgApproachBreakdown.innerHTML = `
+                    <p style="color: #666; font-size: 12px;">
+                        Strokes Gained analysis was disabled for this round.
+                    </p>
+                `;
+            } else if (stats.sgApproachHoles > 0) {
+                sgApproachBreakdown.innerHTML = `
+                    <p style="margin: 5px 0;">
+                        Approach shots tracked on <strong>${stats.sgApproachHoles}</strong> holes
+                    </p>
+                    <p style="margin: 5px 0; font-weight: bold;">
+                        ${sgApproach >= 0 ? '⬆️ Better' : '⬇️ Worse'} than PGA Tour average by 
+                        <span style="color: ${sgApproach >= 0 ? '#28a745' : '#dc3545'};">
+                            ${Math.abs(sgApproach).toFixed(2)} strokes
+                        </span>
+                    </p>
+                    <p style="margin: 5px 0; font-size: 12px; color: #666;">
+                        Based on distance to pin for approach shots
+                    </p>
+                `;
+            } else {
+                sgApproachBreakdown.innerHTML = `
+                    <p style="color: #666; font-size: 12px;">
+                        No approach shot distances recorded this round.<br>
+                        Enter approach yardage on each hole for analysis.
+                    </p>
+                `;
+            }
 
             // Update scorecard with pars and scores
             let outPar = 0, inPar = 0;
@@ -1621,11 +2028,13 @@
                 const roundTypeText = round.roundType === '9' ? '9 holes (Front)' :
                     round.roundType === 'back9' ? '9 holes (Back)' : '18 holes';
 
+                const sgIndicator = round.enableStrokesGained !== false ? ' • 📊 SG' : '';
+
                 return `
                     <div class="history-item" onclick="viewRound('${round.id}')">
                         <div class="history-info">
                             <h4>${round.course}</h4>
-                            <p>${new Date(round.date).toLocaleDateString()} • ${round.tees || 'Regular'} tees • ${roundTypeText}</p>
+                            <p>${new Date(round.date).toLocaleDateString()} • ${round.tees || 'Regular'} tees • ${roundTypeText}${sgIndicator}</p>
                         </div>
                         <div class="history-stats">
                             <div class="score-display">${round.stats.totalScore}</div>
@@ -1662,10 +2071,18 @@
             let totalFairways = 0;
             let totalGIR = 0;
             let totalSGPutting = 0;
+            let totalSGApproach = 0;
+            let totalSGOffTee = 0;
             let sgPuttingRounds = 0;
+            let sgApproachRounds = 0;
+            let sgOffTeeRounds = 0;
             let totalHoles = 0;
             let bestScore = Infinity;
             let worstScore = -Infinity;
+
+            // For yardage analysis
+            let yardageData = {};
+            let approachData = {};
 
             rounds.forEach(round => {
                 const stats = round.stats;
@@ -1675,13 +2092,66 @@
                 totalGIR += stats.girPercentage;
                 totalHoles += round.holes.length;
 
-                if (stats.strokesGainedPutting !== undefined) {
+                if (stats.strokesGainedPutting !== undefined && round.enableStrokesGained !== false) {
                     totalSGPutting += stats.strokesGainedPutting;
                     sgPuttingRounds++;
                 }
 
+                if (stats.strokesGainedApproach !== undefined && stats.sgApproachHoles > 0 && round.enableStrokesGained !== false) {
+                    totalSGApproach += stats.strokesGainedApproach;
+                    sgApproachRounds++;
+                }
+
+                if (stats.strokesGainedOffTee !== undefined && stats.sgOffTeeHoles > 0 && round.enableStrokesGained !== false) {
+                    totalSGOffTee += stats.strokesGainedOffTee;
+                    sgOffTeeRounds++;
+                }
+
                 if (stats.vsPar < bestScore) bestScore = stats.vsPar;
                 if (stats.vsPar > worstScore) worstScore = stats.vsPar;
+
+                // Collect hole data for yardage analysis
+                round.holes.forEach(hole => {
+                    if (hole.yardage && hole.yardage > 0) {
+                        // Group holes into yardage ranges
+                        let range;
+                        if (hole.yardage < 150) range = '< 150';
+                        else if (hole.yardage < 200) range = '150-199';
+                        else if (hole.yardage < 250) range = '200-249';
+                        else if (hole.yardage < 300) range = '250-299';
+                        else if (hole.yardage < 350) range = '300-349';
+                        else if (hole.yardage < 400) range = '350-399';
+                        else if (hole.yardage < 450) range = '400-449';
+                        else if (hole.yardage < 500) range = '450-499';
+                        else range = '500+';
+
+                        if (!yardageData[range]) {
+                            yardageData[range] = { totalScore: 0, totalPar: 0, count: 0 };
+                        }
+                        yardageData[range].totalScore += hole.score;
+                        yardageData[range].totalPar += hole.par;
+                        yardageData[range].count++;
+                    }
+
+                    // Collect approach yardage data for GIR analysis (only if strokes gained was enabled)
+                    if (round.enableStrokesGained !== false && hole.approachYards && hole.approachYards > 0) {
+                        let approachRange;
+                        if (hole.approachYards < 50) approachRange = '< 50';
+                        else if (hole.approachYards < 75) approachRange = '50-74';
+                        else if (hole.approachYards < 100) approachRange = '75-99';
+                        else if (hole.approachYards < 125) approachRange = '100-124';
+                        else if (hole.approachYards < 150) approachRange = '125-149';
+                        else if (hole.approachYards < 175) approachRange = '150-174';
+                        else if (hole.approachYards < 200) approachRange = '175-199';
+                        else approachRange = '200+';
+
+                        if (!approachData[approachRange]) {
+                            approachData[approachRange] = { totalGIR: 0, count: 0 };
+                        }
+                        approachData[approachRange].totalGIR += hole.gir ? 1 : 0;
+                        approachData[approachRange].count++;
+                    }
+                });
             });
 
             const avgScore = Math.round(totalScore / rounds.length);
@@ -1689,6 +2159,111 @@
             const avgFairways = Math.round(totalFairways / rounds.length);
             const avgGIR = Math.round(totalGIR / rounds.length);
             const avgSGPutting = sgPuttingRounds > 0 ? (totalSGPutting / sgPuttingRounds) : 0;
+            const avgSGApproach = sgApproachRounds > 0 ? (totalSGApproach / sgApproachRounds) : 0;
+            const avgSGOffTee = sgOffTeeRounds > 0 ? (totalSGOffTee / sgOffTeeRounds) : 0;
+
+            // Create yardage chart data
+            const yardageRanges = ['< 150', '150-199', '200-249', '250-299', '300-349', '350-399', '400-449', '450-499', '500+'];
+            let yardageChartHTML = '';
+
+            if (Object.keys(yardageData).length > 0) {
+                const maxAvg = Math.max(...yardageRanges.map(range =>
+                    yardageData[range] ? (yardageData[range].totalScore / yardageData[range].count) : 0
+                ));
+
+                yardageChartHTML = `
+                    <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                        <h3 style="color: #2a5298; margin-bottom: 20px; text-align: center;">📏 Scoring by Hole Length</h3>
+                        <div style="display: flex; align-items: end; gap: 5px; height: 200px; margin-bottom: 10px; padding: 0 10px;">
+                            ${yardageRanges.map(range => {
+                    if (!yardageData[range] || yardageData[range].count === 0) {
+                        return `
+                                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                            <div style="height: 20px; background: #e0e0e0; width: 100%; border-radius: 4px 4px 0 0; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">N/A</div>
+                                            <div style="font-size: 10px; color: #666; text-align: center; transform: rotate(-45deg); white-space: nowrap; margin-top: 15px;">${range}</div>
+                                        </div>
+                                    `;
+                    }
+
+                    const avg = yardageData[range].totalScore / yardageData[range].count;
+                    const avgVsPar = avg - (yardageData[range].totalPar / yardageData[range].count);
+                    const height = Math.max(20, (avg / maxAvg) * 160);
+                    const color = avgVsPar <= 0 ? '#28a745' : avgVsPar <= 1 ? '#ffc107' : '#dc3545';
+
+                    return `
+                                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                        <div style="height: ${height}px; background: ${color}; width: 100%; border-radius: 4px 4px 0 0; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: bold;">${avg.toFixed(1)}</div>
+                                        <div style="font-size: 9px; color: #666; text-align: center;">
+                                            <div>${range}</div>
+                                            <div style="font-size: 8px;">(${yardageData[range].count} holes)</div>
+                                        </div>
+                                    </div>
+                                `;
+                }).join('')}
+                        </div>
+                        <div style="text-align: center; font-size: 12px; color: #666; margin-top: 10px;">
+                            <span style="color: #28a745;">■</span> At or under par &nbsp;
+                            <span style="color: #ffc107;">■</span> 1 over par &nbsp;
+                            <span style="color: #dc3545;">■</span> 2+ over par
+                        </div>
+                        <div style="text-align: center; font-size: 11px; color: #666; margin-top: 5px;">
+                            Yardage ranges (yards)
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Create approach GIR chart data
+            const approachRanges = ['< 50', '50-74', '75-99', '100-124', '125-149', '150-174', '175-199', '200+'];
+            let approachChartHTML = '';
+
+            if (Object.keys(approachData).length > 0) {
+                approachChartHTML = `
+                    <div style="margin-top: 30px; padding: 20px; background: #e8f4fd; border-radius: 10px;">
+                        <h3 style="color: #2a5298; margin-bottom: 20px; text-align: center;">🎯 GIR% by Approach Distance</h3>
+                        <div style="display: flex; align-items: end; gap: 5px; height: 200px; margin-bottom: 10px; padding: 0 10px;">
+                            ${approachRanges.map(range => {
+                    if (!approachData[range] || approachData[range].count === 0) {
+                        return `
+                                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                            <div style="height: 20px; background: #e0e0e0; width: 100%; border-radius: 4px 4px 0 0; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">N/A</div>
+                                            <div style="font-size: 10px; color: #666; text-align: center; transform: rotate(-45deg); white-space: nowrap; margin-top: 15px;">${range}</div>
+                                        </div>
+                                    `;
+                    }
+
+                    const girPercent = (approachData[range].totalGIR / approachData[range].count) * 100;
+                    const height = Math.max(20, (girPercent / 100) * 160);
+
+                    let color;
+                    if (girPercent >= 70) color = '#28a745';      // Excellent (green)
+                    else if (girPercent >= 50) color = '#ffc107'; // Good (yellow)
+                    else if (girPercent >= 30) color = '#fd7e14'; // Fair (orange)
+                    else color = '#dc3545';                       // Needs work (red)
+
+                    return `
+                                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                        <div style="height: ${height}px; background: ${color}; width: 100%; border-radius: 4px 4px 0 0; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: bold;">${girPercent.toFixed(0)}%</div>
+                                        <div style="font-size: 9px; color: #666; text-align: center;">
+                                            <div>${range}</div>
+                                            <div style="font-size: 8px;">(${approachData[range].count} shots)</div>
+                                        </div>
+                                    </div>
+                                `;
+                }).join('')}
+                        </div>
+                        <div style="text-align: center; font-size: 12px; color: #666; margin-top: 10px;">
+                            <span style="color: #28a745;">■</span> Excellent (70%+) &nbsp;
+                            <span style="color: #ffc107;">■</span> Good (50-69%) &nbsp;
+                            <span style="color: #fd7e14;">■</span> Fair (30-49%) &nbsp;
+                            <span style="color: #dc3545;">■</span> Needs work (<30%)
+                        </div>
+                        <div style="text-align: center; font-size: 11px; color: #666; margin-top: 5px;">
+                            Approach distance ranges (yards)
+                        </div>
+                    </div>
+                `;
+            }
 
             document.getElementById('statsContent').innerHTML = `
                 <div class="summary-stats">
@@ -1716,6 +2291,22 @@
                         <div class="stat-value">${rounds.length}</div>
                         <div class="stat-label">Total Rounds</div>
                     </div>
+                    ${sgOffTeeRounds > 0 ? `
+                    <div class="stat-box" style="border-left-color: #ff9800;">
+                        <div class="stat-value" style="color: ${avgSGOffTee >= 0 ? '#28a745' : '#dc3545'};">
+                            ${avgSGOffTee > 0 ? '+' : ''}${avgSGOffTee.toFixed(2)}
+                        </div>
+                        <div class="stat-label">Avg SG Off Tee</div>
+                    </div>
+                    ` : ''}
+                    ${sgApproachRounds > 0 ? `
+                    <div class="stat-box" style="border-left-color: #2a5298;">
+                        <div class="stat-value" style="color: ${avgSGApproach >= 0 ? '#28a745' : '#dc3545'};">
+                            ${avgSGApproach > 0 ? '+' : ''}${avgSGApproach.toFixed(2)}
+                        </div>
+                        <div class="stat-label">Avg SG Approach</div>
+                    </div>
+                    ` : ''}
                     ${sgPuttingRounds > 0 ? `
                     <div class="stat-box" style="border-left-color: #28a745;">
                         <div class="stat-value" style="color: ${avgSGPutting >= 0 ? '#28a745' : '#dc3545'};">
@@ -1725,6 +2316,37 @@
                     </div>
                     ` : ''}
                 </div>
+                
+                ${yardageChartHTML}
+                
+                ${approachChartHTML}
+                
+                ${sgOffTeeRounds > 0 ? `
+                <div style="margin-top: 20px; text-align: center; padding: 15px; background: #fff3e0; border-radius: 10px;">
+                    <p style="margin: 0; color: #ff9800; font-size: 14px; font-weight: bold;">
+                        🏌️ Driving Performance
+                    </p>
+                    <p style="margin: 5px 0; color: #333; font-size: 14px;">
+                        You're averaging <strong>${Math.abs(avgSGOffTee).toFixed(2)} strokes ${avgSGOffTee >= 0 ? 'better' : 'worse'}</strong> than PGA Tour average off the tee
+                    </p>
+                    <p style="margin: 0; color: #666; font-size: 12px;">
+                        Based on ${sgOffTeeRounds} rounds with driving data
+                    </p>
+                </div>
+                ` : ''}
+                ${sgApproachRounds > 0 ? `
+                <div style="margin-top: 20px; text-align: center; padding: 15px; background: #e8f4fd; border-radius: 10px;">
+                    <p style="margin: 0; color: #2a5298; font-size: 14px; font-weight: bold;">
+                        🏌️ Approach Shot Performance
+                    </p>
+                    <p style="margin: 5px 0; color: #333; font-size: 14px;">
+                        You're averaging <strong>${Math.abs(avgSGApproach).toFixed(2)} strokes ${avgSGApproach >= 0 ? 'better' : 'worse'}</strong> than PGA Tour average on approach shots
+                    </p>
+                    <p style="margin: 0; color: #666; font-size: 12px;">
+                        Based on ${sgApproachRounds} rounds with approach data
+                    </p>
+                </div>
+                ` : ''}
                 ${sgPuttingRounds > 0 ? `
                 <div style="margin-top: 20px; text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px;">
                     <p style="margin: 0; color: #666; font-size: 14px;">
